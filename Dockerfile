@@ -28,11 +28,13 @@ RUN pip install --no-cache-dir "python-telegram-bot[webhooks]" httpx pytest
 
 WORKDIR /app
 
+COPY entrypoint.sh ./
 COPY scripts/ ./scripts/
 COPY bot.py job_manager.py ./
 
-RUN chmod +x scripts/*.sh
+RUN chmod +x entrypoint.sh scripts/*.sh
 
 RUN mkdir -p /workspace
 
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["python", "bot.py"]

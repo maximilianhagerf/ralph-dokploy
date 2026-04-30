@@ -63,4 +63,31 @@ ONLY IMPLEMENT THIS ONE ISSUE. Do not start on any other issues.
 PROMPT
 )"
 
-claude --model "${ANTHROPIC_MODEL:-claude-sonnet-4-6}" --permission-mode bypassPermissions -p "$PROMPT"
+CLAUDE_STDERR_FILE="$(mktemp)"
+CLAUDE_EXIT=0
+claude --model "${ANTHROPIC_MODEL:-claude-sonnet-4-6}" --permission-mode bypassPermissions -p "$PROMPT" \
+    2>"$CLAUDE_STDERR_FILE" || CLAUDE_EXIT=$?
+
+CLAUDE_STDERR="$(cat "$CLAUDE_STDERR_FILE")"
+rm -f "$CLAUDE_STDERR_FILE"
+
+if [ "$CLAUDE_EXIT" -ne 0 ]; then
+    if echo "$CLAUDE_STDERR" | grep -qiE "authentication|invalid api key|401|unauthorized|credentials|login required|auth"; then
+        if [ -n "${TELEGRAM_BOT_TOKEN:-}" ] && [ -n "${RALPH_ALLOWED_USERS:-}" ]; then
+            ALERT="Ralph auth failure on issue #${ISSUE_NUMBER}: ${ISSUE_TITLE}
+
+Error:
+$(echo "$CLAUDE_STDERR" | head -20)
+
+Fix: re-inject ANTHROPIC_API_KEY or refresh CLAUDE_CREDENTIALS_B64 in Dokploy."
+            IFS=',' read -ra USERS <<< "$RALPH_ALLOWED_USERS"
+            for USER_ID in "${USERS[@]}"; do
+                curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+                    --data-urlencode "chat_id=${USER_ID}" \
+                    --data-urlencode "text=${ALERT}" > /dev/null
+            done
+        fi
+    fi
+    echo "$CLAUDE_STDERR" >&2
+    exit "$CLAUDE_EXIT"
+fi
