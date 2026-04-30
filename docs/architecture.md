@@ -101,6 +101,8 @@ Transitions:
 | `RALPH_ALLOWED_USERS` | Yes | Comma-separated Telegram user IDs allowed to use the bot |
 | `RALPH_REPOS` | Yes | Comma-separated GitHub repo URLs the bot may operate on |
 | `GITHUB_TOKEN` | Yes | PAT with `repo` scope; used for GitHub API calls and `gh` CLI auth |
+| `ANTHROPIC_API_KEY` | Yes | Anthropic API key; authenticates the `claude` CLI in `ralph-once.sh` |
+| `ANTHROPIC_MODEL` | No (default `claude-sonnet-4-6`) | Claude model passed to `claude --model` |
 
 ## Future: job queue
 

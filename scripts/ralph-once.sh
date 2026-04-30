@@ -63,4 +63,4 @@ ONLY IMPLEMENT THIS ONE ISSUE. Do not start on any other issues.
 PROMPT
 )"
 
-claude --permission-mode bypassPermissions -p "$PROMPT"
+claude --model "${ANTHROPIC_MODEL:-claude-sonnet-4-6}" --permission-mode bypassPermissions -p "$PROMPT"
