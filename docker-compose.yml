@@ -1,0 +1,13 @@
+services:
+  ralph-bot:
+    build: .
+    # env_file: .env  # copy .env.example → .env and fill in secrets
+    env_file: .env
+    ports:
+      - "${PORT:-8443}:${PORT:-8443}"
+    volumes:
+      - workspace:/workspace
+    restart: unless-stopped
+
+volumes:
+  workspace:
