@@ -33,7 +33,7 @@ echo "→ Working on issue #$ISSUE_NUMBER: $ISSUE_TITLE"
 
 PROMPT="$(
 	cat <<PROMPT
-You are working on the sweets codebase. Implement the following GitHub issue fully.
+You are working on the codebase described in CLAUDE.md. Implement the following GitHub issue fully.
 
 ## Issue #${ISSUE_NUMBER}: ${ISSUE_TITLE}
 
@@ -45,7 +45,7 @@ ${ISSUE_BODY}
 2. Implement the issue fully, following all project conventions and using the /caveman skill.
 3. As you complete each acceptance criterion, update the issue body to check it off:
    gh issue edit ${ISSUE_NUMBER} --repo ${REPO} --body "<updated body with - [x] for completed items>"
-4. Run \`bun check\` and fix any lint/type errors before committing.
+4. Run the project's lint and type check commands (see CLAUDE.md) before committing.
 5. Commit with a conventional commit message but with the /caveman-commit skill.
 6. When ALL acceptance criteria are checked off, close the issue:
    gh issue close ${ISSUE_NUMBER} --repo ${REPO}
@@ -55,7 +55,7 @@ ${ISSUE_BODY}
 ## Delegation
 
 You can delegate self-contained sub-tasks to a sub-agent by running this via Bash:
-  ccs claude --permission-mode bypassPermissions -p "<sub-task prompt>"
+  claude --permission-mode bypassPermissions -p "<sub-task prompt>"
 
 Use this for focused, parallelisable work: generating a component, writing a schema, drafting a test file, etc. Delegate only when the sub-task is fully self-contained and its output can be reviewed before use. Do not delegate the entire issue.
 
@@ -63,4 +63,4 @@ ONLY IMPLEMENT THIS ONE ISSUE. Do not start on any other issues.
 PROMPT
 )"
 
-ccs claude --permission-mode bypassPermissions -p "$PROMPT"
+claude --permission-mode bypassPermissions -p "$PROMPT"
