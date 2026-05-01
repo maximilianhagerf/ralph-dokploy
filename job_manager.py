@@ -79,8 +79,15 @@ class JobManager:
 
         try:
             os.makedirs(workspace, exist_ok=True)
+            clone_url = repo
+            github_token = os.environ.get("GITHUB_TOKEN")
+            if github_token and clone_url.startswith("https://github.com/"):
+                clone_url = clone_url.replace(
+                    "https://github.com/",
+                    f"https://{github_token}@github.com/",
+                )
             subprocess.run(
-                ["git", "clone", repo, workspace],
+                ["git", "clone", clone_url, workspace],
                 check=True,
                 capture_output=True,
             )
