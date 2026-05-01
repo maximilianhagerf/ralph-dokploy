@@ -84,7 +84,7 @@ class JobManager:
             if github_token and clone_url.startswith("https://github.com/"):
                 clone_url = clone_url.replace(
                     "https://github.com/",
-                    f"https://{github_token}@github.com/",
+                    f"https://x-access-token:{github_token}@github.com/",
                 )
             subprocess.run(
                 ["git", "clone", clone_url, workspace],

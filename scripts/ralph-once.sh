@@ -3,7 +3,7 @@
 # Usage: ./scripts/ralph-once.sh <prd-issue-number>
 set -euo pipefail
 
-REPO="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
+REPO="${RALPH_REPO:-$(gh repo view --json nameWithOwner -q .nameWithOwner)}"
 PRD_ISSUE="${1:-}"
 
 if [ -z "$PRD_ISSUE" ]; then

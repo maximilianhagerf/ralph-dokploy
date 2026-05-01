@@ -4,7 +4,7 @@
 # Example: ./scripts/ralph.sh 1 10 main feature/my-work
 set -euo pipefail
 
-REPO="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
+REPO="${RALPH_REPO:-$(gh repo view --json nameWithOwner -q .nameWithOwner)}"
 PRD_ISSUE="${1:-}"
 MAX_ITERATIONS="${2:-20}"
 BASE_BRANCH="${3:-}"

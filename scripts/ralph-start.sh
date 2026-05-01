@@ -5,7 +5,31 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
+
+# Determine target repo: arg > RALPH_REPOS env > gh repo view (if inside target repo)
+if [ -n "${1:-}" ] && [[ "${1}" == *"/"* ]]; then
+	REPO="$1"
+	shift
+elif [ -n "${RALPH_REPOS:-}" ]; then
+	IFS=',' read -ra _REPOS <<< "$RALPH_REPOS"
+	if [ "${#_REPOS[@]}" -eq 1 ]; then
+		REPO="${_REPOS[0]}"
+	else
+		echo "▶ Available repositories:"
+		for i in "${!_REPOS[@]}"; do
+			echo "  $((i+1))) ${_REPOS[$i]}"
+		done
+		echo ""
+		read -rp "Select repo [1]: " _REPO_IDX
+		_REPO_IDX="${_REPO_IDX:-1}"
+		REPO="${_REPOS[$((_REPO_IDX-1))]}"
+	fi
+	# Normalise: strip https://github.com/ prefix if present
+	REPO="${REPO#https://github.com/}"
+else
+	REPO="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
+fi
+export RALPH_REPO="$REPO"
 
 echo "╔══════════════════════════════════════╗"
 echo "║           Ralph Loop — CV            ║"
